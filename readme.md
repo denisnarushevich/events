@@ -1,5 +1,5 @@
 # Events
->Flexible and simple event manager with focus performance.
+>Flexible and simple event manager with focus on performance.
 
 ## Performance features
 * no expensive method calls, like call(), apply() or bind()
