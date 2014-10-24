@@ -60,11 +60,15 @@ This approach will save some CPU cycles by not determining "this" variable
       //do something
     };
 
-    Events.on(someObj, "someEvent", handler, {someMetaData: 1, self: someObj});
+    var subscriptionId = Events.on(someObj, "someEvent", handler, {someMetaData: 1, self: someObj});
 
     Event.fire(someObj, "someEvent");
 
+    //You can unsubscrube by listener
     Events.off(someObj, handler);
+
+    //Or you can unsubscribe by subscription
+    Events.off(subscriptionId);
 ```
   
 

@@ -30,7 +30,9 @@
             id: id,
             listener: listener,
             meta: meta,
-            once: once || false
+            once: once || false,
+            target: obj,
+            eventType: eventType
         });
         return id;
     }
@@ -39,14 +41,24 @@
         return addListener(obj, eventType, listener, meta, true);
     }
 
+    function unsubscribe(subscriptionId){
+        var sub = subs[subscriptionId];
+        return removeListener(sub.target, sub.eventType, subscriptionId);
+    }
+
     /**
-     * Unsubscribe from event of a given object
-     * @param obj {object}
-     * @param event {string|number} Event id
-     * @param idOrListener {number|function} Subscription id or handler
+     * Unsubscribe from event of a given object, you can pass just subscription id
+     * @param objOrSubId {object|int}
+     * @param event [{string|number}] Event id
+     * @param idOrListener [{number|function}] Subscription id or handler
      * @returns {boolean}
      */
-    function removeListener(obj, eventType, listenerOrId) {
+    function removeListener(objOrSubId, eventType, listenerOrId) {
+        var obj = objOrSubId;
+
+        if(arguments.length === 1)
+            return unsubscribe(objOrSubId);
+
         if (obj._events === undefined || obj._events[eventType] === undefined)
             return false;
 
@@ -174,4 +186,4 @@
     };
 
     global.Events = Events;
-})(global);
+})(window);
