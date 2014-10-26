@@ -30,12 +30,12 @@ function event(host, name){
  * @returns {number} Subscription id
  */
 function on(host, name, handler, data) {
-    var on = Event.on; //V8 opt: cached func runs faster
+    var on = Event.on; //cached func runs faster
     return on(event(host, name), handler, data);
 }
 
 function once(host, name, handler, data) {
-    var once = Event.once; //V8 opt: cached func runs faster
+    var once = Event.once; //cached func runs faster
     return once(event(host, name), handler, data);
 }
 
@@ -61,8 +61,8 @@ function off(host, event, tokenOrListener) {
  * Dispatch an event of a given object
  * @param host {object}
  * @param event {string|number} Event id
- * @param c {object} Sender argument that will be passed to callback
- * @param [d] {object} Event arguments that will be passed to callback
+ * @param [c] {object} Sender argument that will be passed to callback
+ * @param d {object} Event arguments that will be passed to callback
  */
 function fire(host, event, c, d) {
     var sender, args;
@@ -82,7 +82,7 @@ function _fire(host, event, sender, args){
     if (host._events === undefined || host._events[event] === undefined)
         return;
 
-    var fire = Event.fire; //V8 opt: cached func runs faster
+    var fire = Event.fire; //cached func runs faster
     fire(host._events[event], sender, args);
 }
 
