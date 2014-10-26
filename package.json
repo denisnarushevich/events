@@ -1,0 +1,24 @@
+{
+  "name": "events",
+  "version": "1.0.0",
+  "description": ">Flexible and simple JavaScript event manager with focus on performance.",
+  "main": "event.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/narushevich/events.git"
+  },
+  "author": "Denis Narushevich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/narushevich/events/issues"
+  },
+  "homepage": "https://github.com/narushevich/events",
+  "devDependencies": {
+    "browserify": "^6.2.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.1.0"
+  }
+}
