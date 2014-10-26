@@ -5,7 +5,7 @@ function offByToken(e, token) {
     var subsArr = e._subsArr;
     var idx = subsArr.indexOf(subs[token]);
     if (idx !== -1) {
-        delete subsArr[idx];
+        subsArr[idx] = undefined;
         delete subs[token];
         return true;
     }
@@ -21,7 +21,7 @@ function offByHandler(e, handler) {
     for (i = 0; i < l; i++) {
         sub = subsArr[i];
         if (sub !== undefined && sub.handler === handler) {
-            delete subsArr[i];
+            subsArr[i] = undefined;
             delete subs[sub.token];
             return true;
         }
@@ -29,14 +29,14 @@ function offByHandler(e, handler) {
     return false;
 }
 
-function off(e, tokenOrHandler){
-    if(typeof tokenOrHandler === "function")
+function off(e, tokenOrHandler) {
+    if (typeof tokenOrHandler === "function")
         return offByHandler(e, tokenOrHandler);
 
     return offByToken(e, tokenOrHandler);
 }
 
-function on(e, handler, data, once){
+function on(e, handler, data, once) {
     if (typeof handler !== "function")
         throw "Event handler should be a function";
 
@@ -53,7 +53,7 @@ function once(e, handler, data) {
     return on(e, handler, data, true);
 }
 
-function fire(e, sender, args){
+function fire(e, sender, args) {
     var i,
         subs = e._subsArr,
         l = subs.length,
@@ -63,18 +63,19 @@ function fire(e, sender, args){
     for (i = 0; i < l; i++) {
         sub = subs[i];
 
-        if (sub !== undefined) {
-            if(sub.once)
-                offByToken(e, sub.token);
-
-            handler = sub.handler;
-            handler(sender, args, sub.data);
-        } else {
+        if (sub === undefined) {
             cleanUp = true;
+            continue;
         }
+
+        if (sub.once)
+            offByToken(e, sub.token);
+
+        handler = sub.handler;
+        handler(sender, args, sub.data);
     }
 
-    if (cleanUp) {
+    if (cleanUp === true) {
         for (i = l - 1; i !== -1; i--)
             if (subs[i] === undefined)
                 subs.splice(i, 1);
@@ -83,7 +84,7 @@ function fire(e, sender, args){
 
 function Event() {
     this._subsArr = [];
-    this._subs = {};
+    this._subs = Object.create(null);
     this._lastToken = 0;
 }
 
@@ -95,8 +96,8 @@ Event.fire = fire;
 Event.prototype._subs = null;
 Event.prototype._subsArr = null;
 
-Event.prototype.on = function (handler, data, once) {
-    return on(this, handler, data, once);
+Event.prototype.on = function (handler, data) {
+    return on(this, handler, data);
 };
 
 Event.prototype.once = function (handler, data) {

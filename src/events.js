@@ -1,31 +1,42 @@
 var Event = require("./event");
 
 /**
+ * Retrieve Event object from host
+ * @param host
+ * @param name
+ * @returns {*}
+ */
+function event(host, name){
+    var e, events = host._events;
+
+    if (events === undefined)
+        events = host._events = Object.create(null);
+
+    e = events[name];
+
+    if (e === undefined)
+        e = events[name] = new Event();
+
+    return e;
+}
+
+/**
  * Subscribe to event of a given object
  * @param host {object}
- * @param event {string|number} Event id
+ * @param name {string|number} Event name
  * @param handler {function}
  * @param data {object} Data that will be passed to callback
  * @param [once] {boolean}
  * @returns {number} Subscription id
  */
-function on(host, event, handler, data, once) {
-    var e, events = host._events,
-        on = Event.on;
-
-    if (events === undefined)
-        events = host._events = {};
-
-    e = events[event];
-
-    if (e === undefined)
-        e = events[event] = new Event();
-
-    return on(e, handler, data, once);
+function on(host, name, handler, data) {
+    var on = Event.on; //V8 opt: cached func runs faster
+    return on(event(host, name), handler, data);
 }
 
-function once(host, event, handler, data) {
-    return on(host, event, handler, data, true);
+function once(host, name, handler, data) {
+    var once = Event.once; //V8 opt: cached func runs faster
+    return once(event(host, name), handler, data);
 }
 
 /**
@@ -54,7 +65,7 @@ function off(host, event, tokenOrListener) {
  * @param [d] {object} Event arguments that will be passed to callback
  */
 function fire(host, event, c, d) {
-    var sender, args, fire = Event.fire;
+    var sender, args;
 
     if (d === undefined) {
         sender = host;
@@ -64,38 +75,36 @@ function fire(host, event, c, d) {
         args = d;
     }
 
+    return _fire(host, event, sender, args);
+}
+
+function _fire(host, event, sender, args){
     if (host._events === undefined || host._events[event] === undefined)
         return;
 
+    var fire = Event.fire; //V8 opt: cached func runs faster
     fire(host._events[event], sender, args);
 }
 
-function event(name) {
+function callableEvent(name) {
     function ev(sender, args) {
         if(sender === undefined && args === undefined) {
-            var e, events = this._events;
-
-            if (events === undefined)
-                events = this._events = {};
-
-            e = events[name];
-
-            if (e === undefined)
-                e = events[name] = new Event();
-
-            return e;
+            return event(this, name);
         }else
-            return fire(this, name, sender, args);
+            return _fire(this, name, sender, args);
     }
 
     return ev;
 }
 
-window.Events = {
-    on: on,
-    once: once,
-    off: off,
-    fire: fire,
-    event: event,
-    Event: Event
-};
+function Events(){
+    this.on = on;
+    this.once = once;
+    this.off = off;
+    this.fire = fire;
+    this.event = callableEvent;
+    this.Event = Event;
+}
+
+global.Events = new Events();
+
