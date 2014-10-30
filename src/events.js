@@ -106,5 +106,5 @@ function Events(){
     this.Event = Event;
 }
 
-global.Events = new Events();
+module.exports = new Events();
 

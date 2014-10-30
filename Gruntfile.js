@@ -3,7 +3,12 @@ module.exports = function (grunt) {
         browserify: {
             dist: {
                 src: ['src/events.js'],
-                dest: 'dist/events.js'
+                dest: 'dist/events.js',
+                options: {
+                    browserifyOptions: {
+                        standalone: "Events"
+                    }
+                }
             }
         }
     });
