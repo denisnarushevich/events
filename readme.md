@@ -15,17 +15,17 @@
       //do something
     };
 
-    var subscriptionId = Events.on(someObj, "someEvent", handler, {someMetaData: 1, self: someObj});
+    var token = Events.on(someObj, "someEvent", handler, {someMetaData: 1, self: someObj});
 
     Event.fire(someObj, "someEvent");
 
-    //You can unsubscribe by listener
-    Events.off(someObj, handler);
+    Events.off(token);
 
-    //Or you can unsubscribe by subscription
-    Events.off(subscriptionId);
+    //Or you can unsubscribe by listener
+    Events.off(someObj, "someEvent", handler);
 ```
 ## Alternative usage
+Both ways of usage are cross-compatible.
 ```js
 var someObj = {
 change: Events.event("change")
