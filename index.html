@@ -16,13 +16,13 @@
     };
     var token1 = Events.on(host, "test", f, "on");
     var token2 = Events.once(host, "test", f, "once");
-    var token3 = host.e().on(f, "e");
+    var token3 = host.e(f, "e");
 
     Events.fire(host, "test", "args1");
     host.e(host, "args2");
 
     Events.off(host, "test", token1);
-    host.e().off(token3);
+    host.e(token3);
 
     Events.fire(host, "test", "args1");
     Events.fire(host, "test", "args2");

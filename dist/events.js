@@ -1,13 +1,14 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Events=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Subscription = require("./subscription");
 
-function offByToken(e, token) {
+function offByToken(e, sub) {
+    var tkn = sub.token;
     var subs = e._subs;
     var subsArr = e._subsArr;
-    var idx = subsArr.indexOf(subs[token]);
+    var idx = subsArr.indexOf(sub);
     if (idx !== -1) {
         subsArr[idx] = undefined;
-        delete subs[token];
+        delete subs[tkn];
         return true;
     }
     return false;
@@ -47,7 +48,7 @@ function on(e, handler, data, once) {
     e._subsArr.push(s);
     e._subs[token] = s;
 
-    return token;
+    return s;
 }
 
 function once(e, handler, data) {
@@ -70,7 +71,7 @@ function fire(e, sender, args) {
         }
 
         if (sub.once)
-            offByToken(e, sub.token);
+            offByToken(e, sub);
 
         handler = sub.handler;
         handler(sender, args, sub.data);
@@ -116,6 +117,7 @@ Event.prototype.fire = function (sender, args) {
 module.exports = Event;
 },{"./subscription":3}],2:[function(require,module,exports){
 var Event = require("./event");
+var Subscription = require("./subscription");
 
 /**
  * Retrieve Event object from host
@@ -203,14 +205,19 @@ function _fire(host, event, sender, args){
     fire(host._events[event], sender, args);
 }
 
-function callableEvent(name) {
-    function ev(sender, args) {
-        if(sender === undefined && args === undefined) {
-            return event(this, name);
-        }else
-            return _fire(this, name, sender, args);
-    }
 
+function callableEvent(name) {
+    function ev(a, b) {
+        if(a === undefined && b === undefined) {
+            return event(this, name);
+        }else if(a instanceof Subscription){
+            return off(this, name, a);
+        }else if(typeof a === "function"){
+            return on(this, name, a, b);
+        }else {
+            return _fire(this, name, a, b);
+        }
+    }
     return ev;
 }
 
@@ -226,7 +233,7 @@ function Events(){
 module.exports = new Events();
 
 
-},{"./event":1}],3:[function(require,module,exports){
+},{"./event":1,"./subscription":3}],3:[function(require,module,exports){
 function Subscription(token, handler, data, once){
     this.handler = handler;
     this.data = data;

@@ -32,12 +32,12 @@ change: Events.event("change")
 }
 
 //Subscribe
-var sub = someObj.change().on(function(sender, args, data){
+var sub = someObj.change(function(sender, args, data){
     //do something
 });
 
 //Unsubscribe
-someObj.change().off(sub);
+someObj.change(sub);
 
 //Fire
 someObj.change(someObj, {someArg:1});
