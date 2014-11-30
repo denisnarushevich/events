@@ -12,11 +12,11 @@
     //DEFINE:
     function Button(){
         //you can define event on the instance
-        this.push = Events.event("push");
+        this.push = Events.event();
     }
 
     //alternatively you can define event in the prototype
-    Button.prototype.push = Events.event("push");
+    Button.prototype.push = Events.event();
 
 
 

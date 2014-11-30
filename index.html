@@ -12,21 +12,21 @@
         fired++;
     };
     var host = {
-        e: Events.event("test")
+        test: Events.event("test")
     };
     var token1 = Events.on(host, "test", f, "on");
     var token2 = Events.once(host, "test", f, "once");
-    var token3 = host.e(f, "e");
+    var token3 = host.test(f, "e");
 
     Events.fire(host, "test", "args1");
-    host.e(host, "args2");
+    host.test(host, "args2");
 
     Events.off(host, "test", token1);
-    host.e(token3);
+    host.test(token3);
 
     Events.fire(host, "test", "args1");
     Events.fire(host, "test", "args2");
-    host.e(host, "args3");
+    host.test(host, "args3");
 
     console.log("TEST:",fired === 5 && (host._events.test._subsArr.length === 0) ? "OK" : "FAIL");
 </script>
