@@ -9,39 +9,48 @@
 
 ## Usage
 ```js
-    var someObj = {};
-    
-    var handler = function(sender,args,meta){
-      //do something
-    };
+    //DEFINE:
+    function Button(){
+        //you can define event on the instance
+        this.push = Events.event("push");
+    }
 
-    var token = Events.on(someObj, "someEvent", handler, {someMetaData: 1, self: someObj});
+    //alternatively you can define event in the prototype
+    Button.prototype.push = Events.event("push");
 
-    Event.fire(someObj, "someEvent");
 
-    Events.off(token);
 
-    //Or you can unsubscribe by listener
-    Events.off(someObj, "someEvent", handler);
+    //FIRE:
+    Button.prototype.pushButton = function(){
+        //first argument - sender, second - args
+        this.push(this, {});
+
+        //alternatively
+        Events.fire(this, "push", this, {});
+    }
+
+
+
+    //SUBSCRIBE:
+    var button = new Button();
+
+    var listener = function(sender, args, data){
+                           //...
+                       }
+
+    var token = button.push(listener, "thisIsMyDataThatWillBePassedToListener");
+
+    //alternatively
+    var token = Events.on(button, "push", listener, "thisIsMyDataThatWillBePassedToListener");
+
+
+
+    //UNSUBSCRIBE
+    //Unsubscribing this way, you can unsubscribe only by token
+    button.push(token);
+    //but, using "alternative" approach, you can unsubscribe by token...
+    Events.off(button, "push", token);
+    //...or by listener. This will match only first subscription with given listener.
+    Events.off(button, "push", listener);
 ```
-## Alternative usage
-Both ways of usage are cross-compatible.
-```js
-var someObj = {
-change: Events.event("change")
-}
-
-//Subscribe
-var sub = someObj.change(function(sender, args, data){
-    //do something
-});
-
-//Unsubscribe
-someObj.change(sub);
-
-//Fire
-someObj.change(someObj, {someArg:1});
-}
-```
-
 

@@ -110,6 +110,7 @@ function Events(){
     this.fire = fire;
     this.event = callableEvent;
     this.Event = Event;
+    this.Subscription = Subscription;
 }
 
 module.exports = new Events();
