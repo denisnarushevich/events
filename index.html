@@ -12,7 +12,7 @@
         fired++;
     };
     var host = {
-        test: Events.event("test")
+        test: Events.event()
     };
     var token1 = Events.on(host, "test", f, "on");
     var token2 = Events.once(host, "test", f, "once");

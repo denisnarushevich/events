@@ -5,7 +5,6 @@
 * no expensive method calls like call(), apply() or bind();
 * no expensive array operations, like splitting arguments;
 * accepts delegated event handlers, no need to pollute memory with anonymous functions;
-* avoids "this" usage;
 
 ## Usage
 ```js
